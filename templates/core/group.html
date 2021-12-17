@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {%load static%}
+  <meta charset="utf-8">
+  <title>Team</title>
+  <!--{% include "bootstrap" %} -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="{%static 'create-join-group.css' %}" />
+
+  <style>
+    img {
+      max-width: 30px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+
+<body style="background-image:url({% static 'images/background.jpg' %}); ">
+  {% include "navbar.html" %}
+  <h1 style="text-align: center;color:black;"><strong>Team Name: {{group_details.group_name}}</strong>
+    <h1>
+      <div class="row" style="margin-top: 10px;">
+        <div class="col-md-4">
+          <div class="container-fluid">
+            <div class="jumbotron">
+              <h4 style="text-align:center;margin-top:-30px;"><strong> Team Code</strong></h4>
+              <p style="font-size:20px; margin-top:20px;"> <img
+                  src="{{groups_details.group_creator.userprofile.profile_picture.url}}"><strong>{{groups_details.group_creator}}</strong>
+              </p>
+              <p style="font-size:20px;"> Team ID: {{group_details.group_id}}</p>
+              <a type="submit" class="btn btn-danger" href="/groupdel/{{group_details.id}}"> Leave Group </a>
+            </div>
+          </div>
+          <div class="container-fluid">
+            <div class="jumbotron">
+              <h4 style="text-align:center;margin-top:-30px;"><strong> Team Members </strong></h4>
+              {% for users in group_details.group_members.all %}
+              <p style="font-size:20px; margin-top:20px;"> <img
+                  src="{{users.userprofile.profile_picture.url}}"><strong>{{users}}</strong></p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="container-fluid">
+            <div class="jumbotron">
+              <h4 style="text-align:center;margin-top:-30px;"><strong> Tasks </strong></h4>
+              <div class="row">
+                <!--<p style = "font-size:15px; float:left;">Task</p>
+                <p style = "font-size:15px; float:right;">Member</p>-->
+                <div class=col style="font-size:20px; text-align: center;">Task</div>
+                <div class=col style="font-size:20px; text-align: center;">Due Date</div>
+                <div class=col style="font-size:20px; text-align: center;">Member</div>
+                <div class=col style="font-size:20px; text-align: center;">Complete</div>
+                <div class=col style="font-size:20px; text-align: center;">Edit</div>
+              </div>
+              <!--/div-->
+              </br>
+              {% if not table_data %}
+              <p style="font-size:15px;"> There are currently no tasks !</p>
+              {%else%}
+              {% for row in table_data %}
+              <div class="row">
+                <div class=col d-flex justify-content-center style="font-size:20px;"><strong>{{row.task_name}}</strong></div>
+                <div class=col d-flex justify-content-center style="font-size:20px;">{{row.date}}</div>
+
+                {% if row.owner == NULL %}
+                <div class="col d-flex justify-content-center btn-group dropleft float-right" ,style="font-size:20px; ">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Assign
+                  </button>
+                  <div class="dropdown-menu">
+                    {% for user in group_details.group_members.all %}
+                    <a class="dropdown-item"
+                      href="/group/assign/{{user.id}}/{{row.id}}/{{group_details.id}}/">{{user}}</a>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Delete Task</a>
+                  </div>
+                </div>
+                {% else %}
+                <div class="col d-flex justify-content-center" style="font-size:20px">{{row.owner}} </div>
+                {%endif%}
+                <div class="col d-flex justify-content-center">
+                {% if row.status == True %}
+                  <a class="btn btn-success" href="/group/toggle/{{user.id}}/{{row.id}}/{{group_details.id}}/">Complete</a>
+                {% else %}
+                  <a class="btn btn-danger" href="/group/toggle/{{user.id}}/{{row.id}}/{{group_details.id}}/" onclick="#">Submit</a>
+                {%endif%}
+                </div>
+                <div class="col d-flex justify-content-center" style="font-size:20px;">
+                  <form method="GET" action="/group/edit/{{user.id}}/{{row.id}}/{{group_details.id}}">
+                    <input type="submit" class="btn btn-warning" value="Edit">
+                  </form>
+                </div>
+              </div>
+              {% endfor %}
+              {%endif%}
+              <form method="GET" action="/group/add_task/{{group_details.id}}">
+                <input type="submit" class="btn btn-primary" value="Add Task">
+              </form>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- -->
+      <br>
+
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
